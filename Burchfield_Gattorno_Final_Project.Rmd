@@ -1,0 +1,324 @@
+---
+title: "Blood Pressure Outcomes of Randomized Controlled Trial"
+author: "Shelbie Burchfield & Frank Gattorno"
+date: "12/11/2021"
+output: word_document
+toc: TRUE
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r toolbox, echo=FALSE, message=FALSE, warning=FALSE}
+library(epiDisplay)
+library(vtable)
+library(UsingR)
+library(ggpubr)
+library(tidyverse)
+```
+
+
+
+# Introduction
+
+High blood pressure or hypertension is of significant public health interest due to its potential to lead to other potentially deadly health events such as stroke, heart attack and heart failure, vision loss, and heart disease. There are two components of blood pressure, systolic and diastolic blood pressure. Diastolic blood pressure is the pressure exerted on a person's artery walls as the heart pumps blood out to the body. Systolic blood pressure is the pressure exerted as the heart relaxes and blood begins to refill in the ventricles of the heart. For the purposes of this report, we are analyzing the difference in systolic and diastolic blood pressure post-intervention of a standard of care treatment for hypertension and a new drug of interest to determine if it leads to better control of the disease. The randomized controlled trial data that was provided consisted of 378 participants who were randomized into one of two treatment arms (Standard or Experimental). 
+
+
+
+# Methods
+
+A new binary discriminatory variable based on the systolic and diastolic blood pressures was created indicating whether or not an individual was hypertensive or not hypertensive. This criteria was applied to both pre and post-intervention blood pressure readings to determine if an individual met the criteria of being hypertensive before intervention was given and after intervention was given. The cutoffs for hypertension were systolic BP above 130 and diastolic BP above 90. Residuals and QQ plots were plotted to determine normality of the data and randomness. We then applied logistic regression to determine if the binary hypertension status changed post-intervention while accounting for other sociodemographic covariates and baseline hypertension status. We also performed two regressions, one on each of the continuous variables 'delta_sbp' and 'delta_dbp', wchich were created by finding the difference between pre-intervention and post-intervention measures to determine if there was significant change in blood pressures given other sociodemographic covariates. Due to multiple modeling of the data, alpha was set at 0.0125 (0.05/ 2^2).
+
+
+
+# Results
+
+**Exploratory data analysis**
+
+Upon performing exploratory data analysis and summary statistics on the RCT dataset provided, it was determined that the data had some incompleteness due to dropout and had an approximately normal distribution for age. The data was skewed right for the 'delta_sbp' variable and skewed left for the 'delta_dbp' variable. The data is also randomly distributed which was observed in residuals plots. The data had notable disproportionate dropout by study arm. The standard of care treatment arm had a dropout percentage of 33.13% of all participants while the experimental treatment arm had a dropout percentage of 19.34% of all participants in the arm. taking it a step further, we can note that there is differential dropout with respect to demographics. As age increases, we see lower dropout percentages, which is common for clinical trial studies. We also note that dropout percentages drop noticeably as education level increases. Approximately 27.72% of all individuals with less than a high school education dropped out, while about 9.68% dropped out among those who had greater than a high school education.
+
+When we compare the overall study demographics, we can see that randomization was not achieved due to disproportionate distributions seen in the demographics distributions during EDA. We can see with proportion analysis and graphs that employed individuals are not evenly split between treatment arms, and there is a notably larger proportion of employed individuals in the new experimental treatment arm compared to the standard of care treatment arm. Comparing this to unemployed individuals, the distribution of unemployed individuals between treatment arms is less disproportionate. Regarding education level, those individuals with a high school diploma/GED are nearly split 50:50, while those with less than a high school education level are split so that more individuals are in the new study arm compared to the standard treatment arm, though proportions are roughly even. Furthermore, individuals who have greater than a high school education are split even more disproportionately with approx. 37.5% of individuals in the standard treatment arm and 62.5% in the new treatment arm. Also, age has a notably higher density of individuals who are approx. 40 years of age in the new treatment arm, while the experimental arm has a lower density peak at approximately the same age and appears more evenly distributed among age groups. 
+
+Residuals were plotted for the change and SBP and DBP models which showed slightly heavy tails in the QQ plot for change in SBP. The residuals for the change in DBP were normal. We assessed the goodness of fit with adjusted R-squared values, F-statistic, and AIC. The model for change in SBP had an adjusted R-squared value of 0.008, an F-statistic with p-value of 0.2367, and an AIC of  of 2442.39 (compared to the null AIC of 2437.8). This indicates that the model does not explain the data well. The model for change in DBP had an adjusted R-squared value of 0.0289, an F-statistic with p-value of 0.0289, and an AIC of  of 2107.99 (compared to the null AIC of 2109.36). This indicates that the model explains the data better than the null, but the R-squared indicates that this model is not a strong fit. We performed an ROC curve on the hypertension model to determine performance for predicting the outcome variables, and this model had an AUC of 0.5879. The data demonstrating all results stated above are not shown for succinctness but will be provided upon request.
+
+**Interpretation of Post-Intervention SBP as Outcome**
+
+We see that treatment arm is not a significant predictor of Post-Intervention SBP with a p-value of 0.014 and a confidence interval of [1.111, 9.812]. The parameter estimate for the new study arm is 5.461, indicating that the new treatment for hypertension results in a post-intervention SBP of 5.461 units higher than the standard treatment though not significant. The remaining predictor variables were also not significant.
+
+**Interpretation of Post-Intervention DBP as Outcome**
+
+We see that treatment arm is a significant predictor of Post-Intervention DBP with a p-value of 0.006 and a confidence interval of [0.991, 5.800]. The parameter estimate for the new study arm is 3.395, indicating that the new treatment for hypertension results in a post-intervention DBP of 3.757 units higher than the standard treatment. The remaining predictor variables were not significant.
+
+**Interpretation of Post-Intervention Hypertension Status as Outcome**
+
+We see that treatment arm is a significant predictor of the discrete outcome variable Post-Intervention Hypertension Status with a p-value of 0.005 and a confidence interval of [1.294, 4.36]. The adjusted odds ratio for new study arm is 2.374, indicating that an individual who is taking the new treatment for hypertension has significantly higher odds of having post-intervention hypertension compared to individuals taking the standard treatment. We also see that the age variable has an adjusted odds ratio of 1.053 and is significant with a p-value  <0.0001 and a confidence interval of [1.025, 1.08]. This indicates that with every 1 year increase in age, the odds of post-intervention hypertension are multiplied by 1.053.
+
+
+
+# Discussion and Conclusions
+
+We can see in the summary statistics table that three models are run (adjusted for demographics), one with change in SBP as the outcome (continuous), one with change in DBP as the outcome (continuous), and one with change in hypertension status as the outcome (categorical). The overall model significance indicates that study arm and age are significant predictors for change in SBP, change in DBP, and change in hypertension status as the outcome variable. We can also see that baseline hypertension status is significant as a predictor in all three models as well, as expected. 
+
+Based on the above results, we can determine that there is a significant difference in post-intervention hypertension status and DBP by study arm, though it is not favorable for the new treatment being tested. As seen in Figures 1 and 2 above, we can see that the greatest decrease in systolic and diastolic blood pressures were seen in the standard treatment study arm, and not the experimental treatment. We can also see as illustrated in Figure 3, more individuals became hypertensive after taking the new treatment when compared to the standard treatment of care study arm.
+
+
+
+# Tables and Figures
+
+```{r data, echo=FALSE}
+# Frank load data
+#BP_df <- read.csv("/Users/frank.gattorno/Documents/GoogleDrive_sync/Fall 2021/PHC 6099/Final_Project/RCT blood pressure data.csv")
+# Shebie load data
+BP_df <- read.csv("~/FIU_Masters/2021c Fall/R_Computing_for_Health_Science/Data_raw/RCT blood pressure data.csv")
+
+# Create Binary Sex variable
+BP_df$sex_bin <- as.numeric(BP_df$sex == "Female")
+
+# Create variables for change in SBP and DBP
+BP_df$delta_sbp <- BP_df$sbp_1-BP_df$sbp_0
+BP_df$delta_dbp <- BP_df$dbp_1-BP_df$dbp_0
+
+# Create baseline hypertension status variable
+BP_df$hyper_0 <- NA
+BP_df$hyper_0[BP_df$sbp_0 < 130 | BP_df$dbp_0 < 90] <- 0
+BP_df$hyper_0[BP_df$sbp_0 >= 130 | BP_df$dbp_0 >= 90] <- 1 
+
+# Create post-intervention hypertension status variable
+BP_df$hyper_1 <- NA
+BP_df$hyper_1[BP_df$sbp_1 < 130 | BP_df$dbp_1 < 90] <- 0
+BP_df$hyper_1[BP_df$sbp_1 >= 130 | BP_df$dbp_1 >= 90] <- 1
+
+# Create variable for change in hypertension status
+BP_df$delta_hyper <- BP_df$hyper_1 - BP_df$hyper_0
+
+#### Data Beautification ####
+BP_df$studyarm <- factor(
+  x = BP_df$studyarm, 
+  labels = c("Standard Tx", "New Tx")
+)
+BP_df$sex <- as.factor(BP_df$sex)
+BP_df$married <- factor(
+  x = BP_df$married, 
+  labels = c("Single", "Married/Partnered")
+)
+BP_df$educ3 <- factor(
+  x = BP_df$educ3, 
+  labels = c("< HS", "HS/GED", "> HS")
+)
+BP_df$employed <- factor(
+  x = BP_df$employed, 
+  labels = c("Unemployed", "Employed")
+)
+BP_df$hyper_0 <- factor(
+  x = BP_df$hyper_0, 
+  labels = c("Non-Hypertensive", "Hypertensive")
+)
+BP_df$hyper_1 <- factor(
+  x = BP_df$hyper_1, 
+  labels = c("Non-Hypertensive", "Hypertensive")
+)
+BP_df$delta_hyper <- factor(
+  x = BP_df$delta_hyper, 
+  labels = c("Became Non-Hypertensive", "No Change", "Became Hypertensive")
+)
+
+BP_df <- BP_df[-c(11)]
+
+
+```
+
+```{r summary_table, echo=FALSE, results='hide'}
+sumtable(
+  data = BP_df,
+  group = "studyarm",
+  labels = c("Age", "Sex", "Marriage Status", "Education Level",
+             "Employment Status", "Systolic BP Pre-Intervention",
+             "Diastolic BP Pre-Intervention", "Systolic BP Post-Intervention",
+             "Diastolic BP Post-Intervention",
+             "Change in Systolic BP", "Change in Diastolic BP",
+             "Hypertension Status Pre-Intervention",
+             "Hypertension Status Post-Intervention",
+             "Change in Hypertension Status"),
+  out = "csv",
+  file = "~/sumtable1.csv"
+)
+```
+
+```{r print_table, echo=FALSE}
+sumtable1 <- read.csv("~/sumtable1.csv")
+sumtable1$Variable[sumtable1$Variable == "studyarm"] <- "Study Arm"
+options(knitr.kable.NA = '')
+kable(
+  sumtable1, format = "markdown", caption = c(
+    "**Table 1.** Characteristics of patients in each study arm."
+  )
+)
+```
+
+```{r deltas, echo=FALSE, warning=FALSE}
+SBP_delta <- ggplot(data = BP_df) +
+  geom_bar(
+    aes(
+      x = studyarm ,
+      y = delta_sbp,
+      fill = studyarm
+    ),
+    stat = "summary", fun = "mean",
+    position = "dodge"
+  ) +
+  scale_fill_viridis_d() +
+  labs(
+    x = '', y = "Mean Change in SBP (mmHg)", 
+    title = "Figure 1.", subtitle = "Change in SBP \nby Study Arm",
+    fill = ""
+  ) +
+  coord_cartesian(ylim=c(-8, 3)) +
+  theme(legend.position = "none")
+
+
+DBP_delta <- ggplot(data = BP_df) +
+  geom_bar(
+    aes(
+      x = studyarm ,
+      y = delta_dbp,
+      fill = studyarm
+    ),
+    stat = "summary", fun = "mean",
+    position = "dodge"
+  ) +
+  scale_fill_viridis_d() +
+  labs(
+    x = '', y = "Mean Change in DBP (mmHg)", 
+    title = "Figure 2.", subtitle = "Change in DBP \nby Study Arm",
+    fill = ""
+  ) +
+  coord_cartesian(ylim=c(-8, 3)) +
+  theme(legend.position = "none")
+
+
+hyper_delta <- BP_df %>% filter(!is.na(delta_hyper)) %>% ggplot() +
+  geom_bar(
+    aes(
+      x = studyarm ,
+      fill = delta_hyper
+    ),
+    stat = "count",
+    position = "fill"
+  ) +
+  scale_fill_viridis_d() +
+  scale_y_continuous(labels = scales::percent) +
+  labs(
+    x = "Hypertension Status Change", y = "Percent of Patients",
+    title = "Figure 3.", 
+    subtitle = "Change in Hypertension Status \nby Study Arm",
+    fill = "Hypertension Status Change"
+  ) +
+  theme(axis.text.x=element_text(angle = 45, hjust = 1))
+
+ggarrange(SBP_delta, DBP_delta)
+hyper_delta
+```
+
+```{r models, echo=FALSE}
+# Unadjusted
+#   Not going to run unadjusted models because it cuts alpha
+
+# Adjusted
+sbp_mod <- lm(
+  data = BP_df, 
+  formula = delta_sbp ~ studyarm + age + sex + married + educ3 + employed
+)
+
+dbp_mod <- lm(
+  data = BP_df, 
+  formula = delta_dbp ~ studyarm + age + sex + married + educ3 + employed
+)
+  
+hyper_mod <- glm(
+  data = BP_df, 
+  formula = hyper_1 ~ studyarm + age + sex + married + educ3 + employed 
+  + hyper_0, family = binomial
+)
+
+sbp_mod_sum <- as.data.frame(coefficients(summary(sbp_mod)))
+sbp_mod_sum$`Lower 95% CI` <- 
+  sbp_mod_sum$Estimate - (1.96 * sbp_mod_sum$`Std. Error`)
+sbp_mod_sum$`Upper 95% CI` <- 
+  sbp_mod_sum$Estimate + (1.96 * sbp_mod_sum$`Std. Error`)
+sbp_mod_sum$Sig <- rep("", length(sbp_mod_sum$`Pr(>|t|)`))
+sbp_mod_sum$Sig[sbp_mod_sum$`Pr(>|t|)` < (0.05 / 2^2)] <- "*"
+sbp_mod_sum$Sig[sbp_mod_sum$`Pr(>|t|)` < (0.01 / 2^2)] <- "**"
+sbp_mod_sum$Sig[sbp_mod_sum$`Pr(>|t|)` < (0.001 / 2^2)] <- "***"
+rownames(sbp_mod_sum) <- c(
+  "Intercept", "Study Arm: New Tx", "Age", "Sex: Male", 
+  "Marriage Status: Married/Partnered", "Education Level: HS/GED", 
+  "Education Level: > HS", "Employment Status: Employed"
+)
+colnames(sbp_mod_sum)[4] <- c("p-value")
+sbp_mod_sum <- subset(sbp_mod_sum, select = -c(`t value`, `Std. Error`))
+sbp_mod_sum <- 
+  sbp_mod_sum[, c("Estimate", "Lower 95% CI", "Upper 95% CI", "p-value", "Sig")]
+
+
+dbp_mod_sum <- as.data.frame(coefficients(summary(dbp_mod)))
+dbp_mod_sum$`Lower 95% CI` <- 
+  dbp_mod_sum$Estimate - (1.96 * dbp_mod_sum$`Std. Error`)
+dbp_mod_sum$`Upper 95% CI` <- 
+  dbp_mod_sum$Estimate + (1.96 * dbp_mod_sum$`Std. Error`)
+dbp_mod_sum$Sig <- rep("", length(dbp_mod_sum$`Pr(>|t|)`))
+dbp_mod_sum$Sig[dbp_mod_sum$`Pr(>|t|)` < (0.05 / 2^2)] <- "*"
+dbp_mod_sum$Sig[dbp_mod_sum$`Pr(>|t|)` < (0.01 / 2^2)] <- "**"
+dbp_mod_sum$Sig[dbp_mod_sum$`Pr(>|t|)` < (0.001 / 2^2)] <- "***"
+rownames(dbp_mod_sum) <- c(
+  "Intercept", "Study Arm: New Tx", "Age", "Sex: Male", 
+  "Marriage Status: Married/Partnered", "Education Level: HS/GED", 
+  "Education Level: > HS", "Employment Status: Employed"
+)
+colnames(dbp_mod_sum)[4] <- c("p-value")
+dbp_mod_sum <- subset(dbp_mod_sum, select = -c(`t value`, `Std. Error`))
+dbp_mod_sum <- 
+  dbp_mod_sum[, c("Estimate", "Lower 95% CI", "Upper 95% CI", "p-value", "Sig")]
+
+
+hyper_mod_sum <- logistic.display(
+  hyper_mod, crude = FALSE, decimal = 2, simplified = TRUE
+)
+hyper_mod_sum <- as.data.frame(hyper_mod_sum$table)
+hyper_mod_sum$Sig <- rep("", length(hyper_mod_sum$`Pr(>|Z|)`))
+hyper_mod_sum$Sig[hyper_mod_sum$`Pr(>|Z|)` < (0.05 / 2^2)] <- "*"
+hyper_mod_sum$Sig[hyper_mod_sum$`Pr(>|Z|)` < (0.01 / 2^2)] <- "**"
+hyper_mod_sum$Sig[hyper_mod_sum$`Pr(>|Z|)` < (0.001 / 2^2)] <- "***"
+rownames(hyper_mod_sum) <- c(
+  "Study Arm: New Tx", "Age", "Sex: Male", "Marriage Status: Married/Partnered", 
+  "Education Level: HS/GED", "Education Level: > HS", 
+  "Employment Status: Employed", "Baseline Hypertension Status: Hypertensive"
+)
+colnames(hyper_mod_sum) <- c(
+  "Adjusted OR", "Lower 95% CI", "Upper 95% CI", "p-value", "Sig."
+)
+
+```
+
+```{r model_tables, echo=FALSE}
+options(digits = 3)
+kable(
+  sbp_mod_sum, 
+  caption = "**Table 2.** Parameter estimates for change in SBP", 
+  format = "markdown"
+)
+kable(
+  dbp_mod_sum, 
+  caption = "**Table 3.** Parameter estimates for change in DBP", 
+  format = "markdown"
+)
+kable(
+  hyper_mod_sum, 
+  caption = "**Table 4.** Adjusted odds ratios (95% CI) for post-intervention hypertension status", 
+  format = "markdown"
+)
+```
+
+
+
+
