@@ -1,5 +1,5 @@
 # blood_pressure_trial_project
-A class project investigating the outcome of a randomized controlled trial for a
+Rmd and knit document of a class project investigating the outcome of a randomized controlled trial for a
 new blood pressure medication.  
 Outcome variables of interest included systolic and diastolic blood pressure (SBP and 
 DBP) and hypertension status.
